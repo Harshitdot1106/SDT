@@ -20,10 +20,10 @@ Email Notifications: Automated email alerts to inform users about the status of 
 Responsive Design: Mobile-friendly and accessible UI built with Shadcn UI and Tailwind CSS.​
 
 🛠️ Tech Stack
-## Frontend: Vite, React, TypeScript, Shadcn UI, Tailwind CSS​
+Frontend: Vite, React, TypeScript, Shadcn UI, Tailwind CSS​
 
-## Backend: Supabase (Database, Auth, Storage)​
+Backend: Supabase (Database, Auth, Storage)​
 
-## Maps: Google maps JS​
+Maps: Google maps JS​
 
-## Email: Supabase Functions
+Email: Supabase Functions
