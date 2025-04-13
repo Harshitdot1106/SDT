@@ -13,6 +13,29 @@ import {
   Shield
 } from "lucide-react";
 
+const teamMembers = [
+  {
+    name: "Akhil Varanasi",
+    role: "Founder & CEO",
+    bio: "Water infrastructure expert with 7+ years experience in municipal water systems."
+  },
+  {
+    name: "Aditya Bansali",
+    role: "Lead Developer",
+    bio: "Full-stack engineer specializing in geospatial applications and real-time reporting systems."
+  },
+  {
+    name: "Aryan Ranpura",
+    role: "UX/UI Designer",
+    bio: "Human-centered designer focused on creating accessible interfaces for community-driven applications."
+  },
+  {
+    name: "Saurabh Sharma",
+    role: "Data Scientist",
+    bio: "Analytics expert specializing in water quality metrics and infrastructure optimization."
+  }
+];
+
 const AboutPage = () => {
   return (
     <div className="flex flex-col min-h-screen">
@@ -239,6 +262,34 @@ const AboutPage = () => {
           </div>
         </section>
         
+        {/* Team Members */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <h2 className="text-3xl font-bold mb-6">Our Team</h2>
+            <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
+              FixMyWater was created by a team of environmentalists, civic technologists, and water infrastructure experts
+              passionate about improving community water systems through collaboration and transparency.
+            </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {teamMembers.map((member, index) => (
+                <Card key={index} className="h-full">
+                  <CardContent className="pt-6 text-center h-full flex flex-col">
+                    <div className="w-24 h-24 bg-water-soft rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span className="text-2xl text-water-bright font-bold">
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold">{member.name}</h3>
+                    <p className="text-sm text-water-bright mb-2">{member.role}</p>
+                    <p className="text-xs text-gray-600 mt-auto">{member.bio}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+        
         {/* CTA */}
         <section className="py-16 bg-water-bright text-white">
           <div className="container mx-auto px-4 text-center">
@@ -257,43 +308,6 @@ const AboutPage = () => {
                   Report an Issue
                 </Button>
               </Link>
-            </div>
-          </div>
-        </section>
-        
-        {/* Team/Company */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h2 className="text-3xl font-bold mb-6">About Our Team</h2>
-            <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
-              FixMyWater was created by a team of environmentalists, civic technologists, and water infrastructure experts
-              passionate about improving community water systems through collaboration and transparency.
-            </p>
-            
-            <div className="flex flex-wrap justify-center gap-6">
-              <Card className="w-full md:w-64">
-                <CardContent className="pt-6 text-center">
-                  <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4"></div>
-                  <h3 className="font-semibold">Sarah Johnson</h3>
-                  <p className="text-sm text-gray-500">Founder & CEO</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="w-full md:w-64">
-                <CardContent className="pt-6 text-center">
-                  <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4"></div>
-                  <h3 className="font-semibold">Michael Chen</h3>
-                  <p className="text-sm text-gray-500">Water Infrastructure Expert</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="w-full md:w-64">
-                <CardContent className="pt-6 text-center">
-                  <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4"></div>
-                  <h3 className="font-semibold">Priya Patel</h3>
-                  <p className="text-sm text-gray-500">Community Outreach</p>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </section>

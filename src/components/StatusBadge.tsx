@@ -18,19 +18,19 @@ const StatusBadge = ({ status, className, showIcon = true, size = "md" }: Status
         return {
           icon: CircleAlert,
           label: "Urgent",
-          className: "status-urgent"
+          className: "bg-status-urgent/20 text-status-urgent border border-status-urgent/30"
         };
       case "in_progress":
         return {
           icon: Clock,
           label: "In Progress",
-          className: "status-progress"
+          className: "bg-status-progress/20 text-status-progress border border-status-progress/30"
         };
       case "resolved":
         return {
           icon: CheckCircle,
           label: "Resolved",
-          className: "status-resolved"
+          className: "bg-status-resolved/20 text-status-resolved border border-status-resolved/30"
         };
       case "pending":
       default:
@@ -46,13 +46,13 @@ const StatusBadge = ({ status, className, showIcon = true, size = "md" }: Status
   const Icon = config.icon;
   
   const sizeClasses = {
-    sm: "text-xs py-0.5 px-2",
-    md: "text-xs py-1 px-2.5",
-    lg: "text-sm py-1.5 px-3"
+    sm: "text-xs py-0.5 px-2 rounded",
+    md: "text-xs py-1 px-2.5 rounded-md",
+    lg: "text-sm py-1.5 px-3 rounded-md"
   };
   
   return (
-    <span className={cn("status-badge", config.className, sizeClasses[size], className)}>
+    <span className={cn("status-badge inline-flex items-center font-medium", config.className, sizeClasses[size], className)}>
       {showIcon && <Icon className="mr-1 h-3 w-3" />}
       {config.label}
     </span>

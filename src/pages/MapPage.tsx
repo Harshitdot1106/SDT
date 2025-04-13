@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -88,11 +88,17 @@ const mockReports: Report[] = [
   },
 ];
 
+// Google Maps API key - in a real application, this should be stored in environment variables
+const GOOGLE_MAPS_API_KEY = "AIzaSyD2ye_aaaa_example_key_aaaapK-Mw5JCLg";
+
 const MapPage = () => {
   const [reports] = useState<Report[]>(mockReports);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const googleMapRef = useRef<HTMLDivElement>(null);
+  const googleMap = useRef<google.maps.Map | null>(null);
+  const markers = useRef<google.maps.Marker[]>([]);
   
   const filteredReports = reports.filter((report) => 
     report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -100,14 +106,96 @@ const MapPage = () => {
     report.location.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  useEffect(() => {
-    // This would be replaced with actual map initialization
-    const timer = setTimeout(() => {
-      setMapReady(true);
-    }, 500);
+  const initGoogleMap = useCallback(() => {
+    if (!window.google || !googleMapRef.current) return;
     
-    return () => clearTimeout(timer);
-  }, []);
+    // Initialize the map
+    googleMap.current = new window.google.maps.Map(googleMapRef.current, {
+      center: { lat: 40.7128, lng: -74.006 }, // Default to New York City
+      zoom: 12,
+      mapTypeControl: true,
+      streetViewControl: true,
+      fullscreenControl: true,
+    });
+    
+    // Clear any existing markers
+    markers.current.forEach(marker => marker.setMap(null));
+    markers.current = [];
+    
+    // Add markers for each report
+    reports.forEach((report) => {
+      if (report.location.lat && report.location.lng) {
+        const markerColor = getMarkerColor(report.status);
+        
+        // Create a custom marker
+        const marker = new window.google.maps.Marker({
+          position: { lat: report.location.lat, lng: report.location.lng },
+          map: googleMap.current,
+          title: report.title,
+          icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: markerColor,
+            fillOpacity: 1,
+            strokeWeight: 1,
+            strokeColor: '#ffffff',
+            scale: 10,
+          }
+        });
+        
+        // Add click handler for the marker
+        marker.addListener('click', () => {
+          setSelectedReport(report);
+        });
+        
+        markers.current.push(marker);
+      }
+    });
+    
+    setMapReady(true);
+  }, [reports]);
+  
+  // Get marker color based on report status
+  const getMarkerColor = (status: string): string => {
+    switch (status) {
+      case "urgent": return "#f43f5e"; // status-urgent
+      case "in_progress": return "#8b5cf6"; // status-progress 
+      case "resolved": return "#10b981"; // status-resolved
+      default: return "#94a3b8"; // gray-400
+    }
+  };
+  
+  useEffect(() => {
+    // Load the Google Maps API script
+    if (!window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      
+      script.addEventListener('load', () => {
+        initGoogleMap();
+      });
+      
+      document.head.appendChild(script);
+      
+      return () => {
+        document.head.removeChild(script);
+      };
+    } else {
+      initGoogleMap();
+    }
+  }, [initGoogleMap]);
+  
+  // Center the map on the selected report
+  useEffect(() => {
+    if (selectedReport && googleMap.current && selectedReport.location.lat && selectedReport.location.lng) {
+      googleMap.current.setCenter({ 
+        lat: selectedReport.location.lat, 
+        lng: selectedReport.location.lng 
+      });
+      googleMap.current.setZoom(15);
+    }
+  }, [selectedReport]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -198,64 +286,27 @@ const MapPage = () => {
           <div className="lg:col-span-2">
             <Card className="h-[600px] overflow-hidden">
               <CardContent className="p-0 h-full relative">
-                {!mapReady ? (
+                {!mapReady && (
                   <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
                     <div className="text-center">
                       <Droplet size={40} className="animate-bounce mx-auto text-water-bright mb-4" />
                       <p className="text-gray-500">Loading map...</p>
                     </div>
                   </div>
-                ) : (
-                  <>
-                    {/* This is a placeholder for the actual map integration */}
-                    <div className="h-full bg-gray-100 relative">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center max-w-md px-6">
-                          <p className="text-gray-500 mb-2">
-                            Map integration would be implemented here with Mapbox or Leaflet.js
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            The map would display markers for each report with their status colors
-                            and allow for interactive exploration.
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="absolute bottom-4 right-4 bg-white p-2 rounded-md shadow-md">
-                        <Layers size={20} className="text-gray-600" />
-                      </div>
-                      
-                      {/* Placeholder markers */}
-                      {reports.map((report) => {
-                        const getMarkerStyle = () => {
-                          switch (report.status) {
-                            case "urgent": return "bg-status-urgent";
-                            case "in_progress": return "bg-status-progress";
-                            case "resolved": return "bg-status-resolved";
-                            default: return "bg-gray-400";
-                          }
-                        };
-                        
-                        // Position markers randomly on the placeholder
-                        const top = 20 + Math.random() * 60;
-                        const left = 20 + Math.random() * 60;
-                        
-                        return (
-                          <div
-                            key={report.id}
-                            className={`absolute w-4 h-4 rounded-full ${getMarkerStyle()} cursor-pointer border-2 border-white`}
-                            style={{ top: `${top}%`, left: `${left}%` }}
-                            onClick={() => setSelectedReport(report)}
-                          >
-                            {selectedReport?.id === report.id && (
-                              <div className="absolute -inset-1 animate-ping rounded-full opacity-75 bg-white"></div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
                 )}
+                
+                {/* Google Maps container */}
+                <div 
+                  ref={googleMapRef}
+                  className="h-full w-full"
+                  style={{ display: mapReady ? 'block' : 'none' }}
+                >
+                  {/* Map will be rendered here */}
+                </div>
+                
+                <div className="absolute bottom-4 right-4 bg-white p-2 rounded-md shadow-md">
+                  <Layers size={20} className="text-gray-600" />
+                </div>
               </CardContent>
             </Card>
           </div>
