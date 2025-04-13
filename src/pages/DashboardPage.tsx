@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,84 +19,87 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Status } from "@/types";
-
-// Mock data for the dashboard
-const statusData = [
-  { name: "Urgent", value: 24, color: "#f43f5e" },
-  { name: "In Progress", value: 38, color: "#8b5cf6" },
-  { name: "Resolved", value: 65, color: "#10b981" },
-  { name: "Pending", value: 18, color: "#94a3b8" }
-];
-
-const typeData = [
-  { name: "Leak", value: 35, color: "#3b82f6" },
-  { name: "Contamination", value: 22, color: "#ef4444" },
-  { name: "Pressure", value: 18, color: "#f59e0b" },
-  { name: "Outage", value: 15, color: "#6b7280" },
-  { name: "Billing", value: 12, color: "#8b5cf6" },
-  { name: "Flooding", value: 25, color: "#06b6d4" },
-  { name: "Other", value: 8, color: "#d1d5db" }
-];
-
-const monthlyData = [
-  { name: "Jan", issues: 42, resolved: 35 },
-  { name: "Feb", issues: 38, resolved: 30 },
-  { name: "Mar", issues: 55, resolved: 45 },
-  { name: "Apr", issues: 47, resolved: 40 },
-  { name: "May", issues: 60, resolved: 48 },
-  { name: "Jun", issues: 65, resolved: 52 },
-  { name: "Jul", issues: 75, resolved: 58 },
-  { name: "Aug", issues: 80, resolved: 65 },
-  { name: "Sep", issues: 65, resolved: 55 },
-  { name: "Oct", issues: 70, resolved: 60 },
-  { name: "Nov", issues: 45, resolved: 38 },
-  { name: "Dec", issues: 50, resolved: 42 }
-];
-
-const recentReports = [
-  {
-    id: "1",
-    title: "Burst pipe on Main Street",
-    location: "123 Main St, Anytown",
-    status: "urgent" as Status,
-    date: "12 hours ago"
-  },
-  {
-    id: "2",
-    title: "Brown water coming from tap",
-    location: "456 Oak Ave, Anytown",
-    status: "in_progress" as Status,
-    date: "2 days ago"
-  },
-  {
-    id: "3",
-    title: "No water pressure",
-    location: "789 Pine St, Anytown",
-    status: "pending" as Status,
-    date: "3 days ago"
-  },
-  {
-    id: "4",
-    title: "Water meter reading incorrect",
-    location: "101 Elm St, Anytown",
-    status: "resolved" as Status,
-    date: "1 week ago"
-  },
-  {
-    id: "5",
-    title: "Flooding in basement",
-    location: "202 Maple Dr, Anytown",
-    status: "urgent" as Status,
-    date: "12 hours ago"
-  }
-];
-
-const resolvedThisMonth = 42;
-const totalReportsThisMonth = 58;
-const percentResolved = Math.round((resolvedThisMonth / totalReportsThisMonth) * 100);
+import { useReports } from "@/context/ReportsContext";
+import { formatDistanceToNow } from "date-fns";
 
 const DashboardPage = () => {
+  const { reports } = useReports();
   const [timeframe, setTimeframe] = useState("all");
+  
+  // Compute stats from the reports
+  const stats = useMemo(() => {
+    // Count reports by status
+    const statusData = [
+      { name: "Urgent", value: reports.filter(r => r.status === "urgent").length, color: "#f43f5e" },
+      { name: "In Progress", value: reports.filter(r => r.status === "in_progress").length, color: "#8b5cf6" },
+      { name: "Resolved", value: reports.filter(r => r.status === "resolved").length, color: "#10b981" },
+      { name: "Pending", value: reports.filter(r => r.status === "pending").length, color: "#94a3b8" }
+    ];
+
+    // Count reports by type
+    const typeData = [
+      { name: "Leak", value: reports.filter(r => r.issue_type === "leak").length, color: "#3b82f6" },
+      { name: "Contamination", value: reports.filter(r => r.issue_type === "contamination").length, color: "#ef4444" },
+      { name: "Pressure", value: reports.filter(r => r.issue_type === "pressure").length, color: "#f59e0b" },
+      { name: "Outage", value: reports.filter(r => r.issue_type === "outage").length, color: "#6b7280" },
+      { name: "Billing", value: reports.filter(r => r.issue_type === "billing").length, color: "#8b5cf6" },
+      { name: "Flooding", value: reports.filter(r => r.issue_type === "flooding").length, color: "#06b6d4" },
+      { name: "Other", value: reports.filter(r => r.issue_type === "other").length, color: "#d1d5db" }
+    ];
+
+    // Get recent reports
+    const recentReports = reports
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 5)
+      .map(report => ({
+        id: report.id,
+        title: report.title,
+        location: report.location.address,
+        status: report.status,
+        date: formatDistanceToNow(new Date(report.created_at), { addSuffix: true })
+      }));
+
+    // Calculate resolution rate
+    const currentMonth = new Date().getMonth();
+    const reportsThisMonth = reports.filter(report => {
+      const reportMonth = new Date(report.created_at).getMonth();
+      return reportMonth === currentMonth;
+    });
+
+    const resolvedThisMonth = reportsThisMonth.filter(
+      report => report.status === "resolved"
+    ).length;
+
+    const totalReportsThisMonth = reportsThisMonth.length;
+    const percentResolved = totalReportsThisMonth > 0 
+      ? Math.round((resolvedThisMonth / totalReportsThisMonth) * 100)
+      : 0;
+
+    return {
+      statusData,
+      typeData,
+      recentReports,
+      resolvedThisMonth,
+      totalReportsThisMonth,
+      percentResolved
+    };
+  }, [reports]);
+
+  // We'll keep using the mock data for monthly data since we don't have real historical data
+  const monthlyData = [
+    { name: "Jan", issues: 42, resolved: 35 },
+    { name: "Feb", issues: 38, resolved: 30 },
+    { name: "Mar", issues: 55, resolved: 45 },
+    { name: "Apr", issues: 47, resolved: 40 },
+    { name: "May", issues: 60, resolved: 48 },
+    { name: "Jun", issues: 65, resolved: 52 },
+    { name: "Jul", issues: 75, resolved: 58 },
+    { name: "Aug", issues: 80, resolved: 65 },
+    { name: "Sep", issues: 65, resolved: 55 },
+    { name: "Oct", issues: 70, resolved: 60 },
+    { name: "Nov", issues: 45, resolved: 38 },
+    { name: "Dec", issues: 50, resolved: 42 }
+  ];
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -133,7 +135,7 @@ const DashboardPage = () => {
               <CardContent className="flex items-center justify-between p-6">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-500">Urgent Issues</p>
-                  <p className="text-3xl font-bold">{statusData[0].value}</p>
+                  <p className="text-3xl font-bold">{stats.statusData[0].value}</p>
                 </div>
                 <CircleAlertIcon className="h-8 w-8 text-status-urgent" />
               </CardContent>
@@ -143,7 +145,7 @@ const DashboardPage = () => {
               <CardContent className="flex items-center justify-between p-6">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-500">In Progress</p>
-                  <p className="text-3xl font-bold">{statusData[1].value}</p>
+                  <p className="text-3xl font-bold">{stats.statusData[1].value}</p>
                 </div>
                 <ClipboardCheckIcon className="h-8 w-8 text-status-progress" />
               </CardContent>
@@ -153,7 +155,7 @@ const DashboardPage = () => {
               <CardContent className="flex items-center justify-between p-6">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-500">Resolved</p>
-                  <p className="text-3xl font-bold">{statusData[2].value}</p>
+                  <p className="text-3xl font-bold">{stats.statusData[2].value}</p>
                 </div>
                 <CheckCircleIcon className="h-8 w-8 text-status-resolved" />
               </CardContent>
@@ -163,7 +165,7 @@ const DashboardPage = () => {
               <CardContent className="flex items-center justify-between p-6">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-500">Pending Review</p>
-                  <p className="text-3xl font-bold">{statusData[3].value}</p>
+                  <p className="text-3xl font-bold">{stats.statusData[3].value}</p>
                 </div>
                 <ClockIcon className="h-8 w-8 text-gray-500" />
               </CardContent>
@@ -207,7 +209,7 @@ const DashboardPage = () => {
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
-                            data={statusData}
+                            data={stats.statusData}
                             cx="50%"
                             cy="50%"
                             labelLine={false}
@@ -216,7 +218,7 @@ const DashboardPage = () => {
                             dataKey="value"
                             label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
                           >
-                            {statusData.map((entry, index) => (
+                            {stats.statusData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
@@ -236,7 +238,7 @@ const DashboardPage = () => {
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
-                            data={typeData}
+                            data={stats.typeData}
                             cx="50%"
                             cy="50%"
                             labelLine={false}
@@ -245,7 +247,7 @@ const DashboardPage = () => {
                             dataKey="value"
                             label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
                           >
-                            {typeData.map((entry, index) => (
+                            {stats.typeData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
@@ -266,17 +268,17 @@ const DashboardPage = () => {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="flex flex-col items-center">
-                    <div className="text-5xl font-bold text-status-resolved mb-2">{percentResolved}%</div>
+                    <div className="text-5xl font-bold text-status-resolved mb-2">{stats.percentResolved}%</div>
                     <p className="text-sm text-gray-500 mb-4">Issues resolved this month</p>
                     <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-status-resolved"
-                        style={{ width: `${percentResolved}%` }}
+                        style={{ width: `${stats.percentResolved}%` }}
                       ></div>
                     </div>
                     <div className="flex justify-between w-full text-sm text-gray-500 mt-2">
-                      <span>{resolvedThisMonth} resolved</span>
-                      <span>{totalReportsThisMonth} total</span>
+                      <span>{stats.resolvedThisMonth} resolved</span>
+                      <span>{stats.totalReportsThisMonth} total</span>
                     </div>
                   </div>
                 </CardContent>
@@ -288,7 +290,7 @@ const DashboardPage = () => {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-4">
-                    {recentReports.map((report) => (
+                    {stats.recentReports.map((report) => (
                       <div key={report.id} className="border-b last:border-b-0 pb-3 last:pb-0">
                         <div className="flex justify-between items-start mb-1">
                           <Link to={`/reports/${report.id}`} className="font-medium hover:text-water-bright transition-colors">

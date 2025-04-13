@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -16,14 +15,20 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle, ImagePlus, MapPin, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useReports } from "@/context/ReportsContext";
+import { IssueType } from "@/types";
 
 const ReportIssuePage = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const { addReport } = useReports();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const [formState, setFormState] = useState({
     title: "",
     description: "",
-    issueType: "",
+    issueType: "" as IssueType | "",
     address: "",
     images: [] as File[],
   });
@@ -34,7 +39,7 @@ const ReportIssuePage = () => {
   };
 
   const handleSelectChange = (value: string) => {
-    setFormState((prev) => ({ ...prev, issueType: value }));
+    setFormState((prev) => ({ ...prev, issueType: value as IssueType }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,11 +63,37 @@ const ReportIssuePage = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call with timeout
+    if (!formState.title || !formState.description || !formState.issueType || !formState.address) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill out all required fields.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Add the new report
+    addReport({
+      title: formState.title,
+      description: formState.description,
+      issue_type: formState.issueType as IssueType,
+      status: "pending",
+      location: {
+        address: formState.address,
+      },
+      user_id: "current-user", // In a real app, this would be the logged-in user's ID
+      user: {
+        full_name: "Current User", // In a real app, this would be the logged-in user's name
+        email: "user@example.com", // In a real app, this would be the logged-in user's email
+      },
+    });
+    
+    // Simulate API delay
     setTimeout(() => {
       toast({
         title: "Report Submitted Successfully",
-        description: "Your water issue has been reported. You can track its status.",
+        description: "Your water issue has been reported. You can track its status on the dashboard.",
       });
       
       // Reset form
@@ -75,6 +106,9 @@ const ReportIssuePage = () => {
       });
       
       setIsSubmitting(false);
+      
+      // Redirect to dashboard after submission
+      navigate("/dashboard");
     }, 1500);
   };
 
