@@ -19,6 +19,7 @@ import {
   CalendarIcon
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Status } from "@/types";
 
 // Mock data for the dashboard
 const statusData = [
@@ -58,35 +59,35 @@ const recentReports = [
     id: "1",
     title: "Burst pipe on Main Street",
     location: "123 Main St, Anytown",
-    status: "urgent",
+    status: "urgent" as Status,
     date: "12 hours ago"
   },
   {
     id: "2",
     title: "Brown water coming from tap",
     location: "456 Oak Ave, Anytown",
-    status: "in_progress",
+    status: "in_progress" as Status,
     date: "2 days ago"
   },
   {
     id: "3",
     title: "No water pressure",
     location: "789 Pine St, Anytown",
-    status: "pending",
+    status: "pending" as Status,
     date: "3 days ago"
   },
   {
     id: "4",
     title: "Water meter reading incorrect",
     location: "101 Elm St, Anytown",
-    status: "resolved",
+    status: "resolved" as Status,
     date: "1 week ago"
   },
   {
     id: "5",
     title: "Flooding in basement",
     location: "202 Maple Dr, Anytown",
-    status: "urgent",
+    status: "urgent" as Status,
     date: "12 hours ago"
   }
 ];
