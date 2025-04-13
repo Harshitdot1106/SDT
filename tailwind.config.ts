@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+                // Water-themed colors
+                water: {
+                    bright: '#1EAEDB',
+                    sky: '#33C3F0',
+                    ocean: '#0EA5E9',
+                    soft: '#D3E4FD',
+                },
+                purple: {
+                    primary: '#9b87f5',
+                    secondary: '#7E69AB',
+                    tertiary: '#6E59A5',
+                    light: '#D6BCFA',
+                    vivid: '#8B5CF6',
+                },
+                status: {
+                    urgent: '#ef4444',
+                    progress: '#eab308',
+                    resolved: '#22c55e',
+                }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +104,31 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+                'ripple': {
+                    '0%': {
+                        transform: 'scale(0.8)',
+                        opacity: '1'
+                    },
+                    '100%': {
+                        transform: 'scale(2)',
+                        opacity: '0'
+                    }
+                },
+                'float': {
+                    '0%, 100%': {
+                        transform: 'translateY(0)'
+                    },
+                    '50%': {
+                        transform: 'translateY(-5px)'
+                    }
+                }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+                'ripple': 'ripple 1.5s infinite ease-in-out',
+                'float': 'float 3s ease-in-out infinite'
 			}
 		}
 	},
