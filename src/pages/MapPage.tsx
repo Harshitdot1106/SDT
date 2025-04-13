@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import StatusBadge from "@/components/StatusBadge";
-import { Search, Layers, Droplet } from "lucide-react";
+import { Search, Layers, Droplet, AlertCircle } from "lucide-react";
 import { Report } from "@/types";
 import { Link } from "react-router-dom";
 
@@ -88,14 +88,16 @@ const mockReports: Report[] = [
   },
 ];
 
-// Google Maps API key - in a real application, this should be stored in environment variables
-const GOOGLE_MAPS_API_KEY = "AIzaSyD2ye_aaaa_example_key_aaaapK-Mw5JCLg";
+// For demonstration purposes, using a placeholder key
+// In a real app, this should be stored in environment variables
+const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
 
 const MapPage = () => {
   const [reports] = useState<Report[]>(mockReports);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
   const googleMapRef = useRef<HTMLDivElement>(null);
   const googleMap = useRef<google.maps.Map | null>(null);
   const markers = useRef<google.maps.Marker[]>([]);
@@ -109,49 +111,54 @@ const MapPage = () => {
   const initGoogleMap = useCallback(() => {
     if (!window.google || !googleMapRef.current) return;
     
-    // Initialize the map
-    googleMap.current = new window.google.maps.Map(googleMapRef.current, {
-      center: { lat: 40.7128, lng: -74.006 }, // Default to New York City
-      zoom: 12,
-      mapTypeControl: true,
-      streetViewControl: true,
-      fullscreenControl: true,
-    });
-    
-    // Clear any existing markers
-    markers.current.forEach(marker => marker.setMap(null));
-    markers.current = [];
-    
-    // Add markers for each report
-    reports.forEach((report) => {
-      if (report.location.lat && report.location.lng) {
-        const markerColor = getMarkerColor(report.status);
-        
-        // Create a custom marker
-        const marker = new window.google.maps.Marker({
-          position: { lat: report.location.lat, lng: report.location.lng },
-          map: googleMap.current,
-          title: report.title,
-          icon: {
-            path: window.google.maps.SymbolPath.CIRCLE,
-            fillColor: markerColor,
-            fillOpacity: 1,
-            strokeWeight: 1,
-            strokeColor: '#ffffff',
-            scale: 10,
-          }
-        });
-        
-        // Add click handler for the marker
-        marker.addListener('click', () => {
-          setSelectedReport(report);
-        });
-        
-        markers.current.push(marker);
-      }
-    });
-    
-    setMapReady(true);
+    try {
+      // Initialize the map
+      googleMap.current = new window.google.maps.Map(googleMapRef.current, {
+        center: { lat: 40.7128, lng: -74.006 }, // Default to New York City
+        zoom: 12,
+        mapTypeControl: true,
+        streetViewControl: true,
+        fullscreenControl: true,
+      });
+      
+      // Clear any existing markers
+      markers.current.forEach(marker => marker.setMap(null));
+      markers.current = [];
+      
+      // Add markers for each report
+      reports.forEach((report) => {
+        if (report.location.lat && report.location.lng) {
+          const markerColor = getMarkerColor(report.status);
+          
+          // Create a custom marker
+          const marker = new window.google.maps.Marker({
+            position: { lat: report.location.lat, lng: report.location.lng },
+            map: googleMap.current,
+            title: report.title,
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              fillColor: markerColor,
+              fillOpacity: 1,
+              strokeWeight: 1,
+              strokeColor: '#ffffff',
+              scale: 10,
+            }
+          });
+          
+          // Add click handler for the marker
+          marker.addListener('click', () => {
+            setSelectedReport(report);
+          });
+          
+          markers.current.push(marker);
+        }
+      });
+      
+      setMapReady(true);
+    } catch (error) {
+      console.error("Error initializing Google Map:", error);
+      setMapError("Failed to initialize map. Please check console for details.");
+    }
   }, [reports]);
   
   // Get marker color based on report status
@@ -174,6 +181,11 @@ const MapPage = () => {
       
       script.addEventListener('load', () => {
         initGoogleMap();
+      });
+      
+      script.addEventListener('error', () => {
+        console.error("Google Maps API failed to load");
+        setMapError("Failed to load Google Maps API. Please check your API key.");
       });
       
       document.head.appendChild(script);
@@ -286,7 +298,7 @@ const MapPage = () => {
           <div className="lg:col-span-2">
             <Card className="h-[600px] overflow-hidden">
               <CardContent className="p-0 h-full relative">
-                {!mapReady && (
+                {!mapReady && !mapError && (
                   <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
                     <div className="text-center">
                       <Droplet size={40} className="animate-bounce mx-auto text-water-bright mb-4" />
@@ -295,11 +307,24 @@ const MapPage = () => {
                   </div>
                 )}
                 
+                {mapError && (
+                  <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                    <div className="text-center max-w-md p-4">
+                      <AlertCircle size={40} className="mx-auto text-red-500 mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Map Error</h3>
+                      <p className="text-gray-600 mb-4">{mapError}</p>
+                      <p className="text-sm text-gray-500">
+                        Note: For this demo, you need to replace "YOUR_GOOGLE_MAPS_API_KEY" with a valid Google Maps API key.
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
                 {/* Google Maps container */}
                 <div 
                   ref={googleMapRef}
                   className="h-full w-full"
-                  style={{ display: mapReady ? 'block' : 'none' }}
+                  style={{ display: mapReady && !mapError ? 'block' : 'none' }}
                 >
                   {/* Map will be rendered here */}
                 </div>

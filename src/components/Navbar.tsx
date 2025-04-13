@@ -1,48 +1,85 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Droplet, Menu, X, User, BarChart3 } from "lucide-react";
+import { Menu, X, Droplet, Home, Map, LayoutDashboard, PenLine, LogIn, UserPlus } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const location = useLocation();
+  
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-40">
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="relative">
-                <Droplet size={28} className="text-water-bright" />
-                <span className="absolute animate-ping w-2 h-2 rounded-full bg-water-ocean/50 -top-1 right-0"></span>
-              </div>
-              <span className="font-bold text-xl text-water-bright">FixMyWater</span>
-            </Link>
-          </div>
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="bg-blue-500 rounded-full p-2">
+              <Droplet size={24} className="text-white" />
+            </div>
+            <span className="font-bold text-xl text-blue-500">FixMyWater</span>
+          </Link>
           
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/reports" className="text-gray-600 hover:text-water-bright transition-colors">
-              View Reports
-            </Link>
-            <Link to="/map" className="text-gray-600 hover:text-water-bright transition-colors">
-              Issue Map
-            </Link>
-            <Link to="/about" className="text-gray-600 hover:text-water-bright transition-colors">
-              About
-            </Link>
-            <Link to="/report-issue">
-              <Button className="water-button">Report an Issue</Button>
-            </Link>
-            <Link to="/login">
-              <Button variant="outline" size="icon">
-                <User size={18} />
+          <div className="hidden md:flex items-center space-x-1">
+            <Link to="/">
+              <Button 
+                variant={location.pathname === "/" ? "secondary" : "ghost"} 
+                className="flex items-center gap-2"
+              >
+                <Home size={18} />
+                <span>Home</span>
               </Button>
             </Link>
-            <Link to="/admin">
-              <Button variant="outline" size="icon">
-                <BarChart3 size={18} />
+            
+            <Link to="/map">
+              <Button 
+                variant={location.pathname === "/map" ? "secondary" : "ghost"} 
+                className="flex items-center gap-2"
+              >
+                <Map size={18} />
+                <span>Map</span>
+              </Button>
+            </Link>
+            
+            <Link to="/dashboard">
+              <Button 
+                variant={location.pathname === "/dashboard" ? "secondary" : "ghost"} 
+                className="flex items-center gap-2"
+              >
+                <LayoutDashboard size={18} />
+                <span>Dashboard</span>
+              </Button>
+            </Link>
+            
+            <Link to="/report-issue">
+              <Button 
+                variant={location.pathname === "/report-issue" ? "secondary" : "ghost"} 
+                className="flex items-center gap-2"
+              >
+                <PenLine size={18} />
+                <span>Report Issue</span>
+              </Button>
+            </Link>
+          </div>
+
+          <div className="hidden md:flex items-center space-x-2">
+            <Link to="/login">
+              <Button 
+                variant="ghost" 
+                className="flex items-center gap-2"
+              >
+                <LogIn size={18} />
+                <span>Sign in</span>
+              </Button>
+            </Link>
+            
+            <Link to="/register">
+              <Button 
+                className="bg-purple-500 text-white hover:bg-purple-600"
+              >
+                <UserPlus size={18} className="mr-2" />
+                Sign up
               </Button>
             </Link>
           </div>
@@ -65,49 +102,66 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-t">
           <div className="container mx-auto px-4 py-3 space-y-2">
             <Link 
-              to="/reports" 
-              className="block px-3 py-2 rounded-md hover:bg-gray-100"
+              to="/" 
+              className={`flex items-center gap-2 px-3 py-2 rounded-md ${
+                location.pathname === "/" ? "bg-gray-100" : "hover:bg-gray-100"
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              View Reports
+              <Home size={18} />
+              <span>Home</span>
             </Link>
+            
             <Link 
               to="/map" 
-              className="block px-3 py-2 rounded-md hover:bg-gray-100"
+              className={`flex items-center gap-2 px-3 py-2 rounded-md ${
+                location.pathname === "/map" ? "bg-gray-100" : "hover:bg-gray-100"
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Issue Map
+              <Map size={18} />
+              <span>Map</span>
             </Link>
+            
             <Link 
-              to="/about" 
-              className="block px-3 py-2 rounded-md hover:bg-gray-100"
+              to="/dashboard" 
+              className={`flex items-center gap-2 px-3 py-2 rounded-md ${
+                location.pathname === "/dashboard" ? "bg-gray-100" : "hover:bg-gray-100"
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              About
+              <LayoutDashboard size={18} />
+              <span>Dashboard</span>
             </Link>
+            
             <Link 
               to="/report-issue" 
-              className="block px-3 py-2 rounded-md bg-water-bright text-white"
+              className={`flex items-center gap-2 px-3 py-2 rounded-md ${
+                location.pathname === "/report-issue" ? "bg-gray-100" : "hover:bg-gray-100"
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Report an Issue
+              <PenLine size={18} />
+              <span>Report Issue</span>
             </Link>
-            <div className="flex space-x-2 pt-2 border-t">
+            
+            <div className="pt-4 border-t flex flex-col gap-2">
               <Link 
                 to="/login" 
-                className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100"
+                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <User size={18} />
-                <span>Login / Register</span>
+                <LogIn size={18} />
+                <span>Sign in</span>
               </Link>
+              
               <Link 
-                to="/admin" 
-                className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100"
+                to="/register" 
+                className="flex items-center gap-2 px-3 py-2 rounded-md bg-purple-500 text-white"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <BarChart3 size={18} />
-                <span>Admin</span>
+                <UserPlus size={18} />
+                <span>Sign up</span>
               </Link>
             </div>
           </div>

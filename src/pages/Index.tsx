@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Droplet, CheckCircle2, AlertCircle, Clock4, ArrowRight } from "lucide-react";
+import { Map, PenLine } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -12,29 +12,25 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-water-soft to-white py-16 md:py-24">
+        <section className="bg-blue-600 py-16 md:py-24">
           <div className="container mx-auto px-4 text-center">
-            <div className="relative inline-block mb-6">
-              <Droplet size={40} className="text-water-bright animate-float" />
-              <span className="absolute animate-ping w-3 h-3 rounded-full bg-water-ocean/50 -top-1 right-0"></span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-              Clean Water, <span className="text-water-bright">Better Communities</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+              Report and track water issues in your community
             </h1>
-            <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-              Report water issues instantly. Track progress in real-time. 
-              Help improve water infrastructure in your neighborhood.
+            <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto">
+              Help improve water infrastructure by reporting leaks, contamination, and other issues.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/report-issue">
-                <Button className="water-button text-base px-6 py-6 h-auto">
-                  Report a Water Issue
-                  <ArrowRight className="ml-2 h-5 w-5" />
+              <Link to="/map">
+                <Button className="bg-white text-blue-600 hover:bg-gray-100 text-base px-6 py-6 h-auto flex items-center gap-2">
+                  <Map className="h-5 w-5" />
+                  View Issues Map
                 </Button>
               </Link>
-              <Link to="/map">
-                <Button variant="outline" className="text-base px-6 py-6 h-auto">
-                  View Issue Map
+              <Link to="/report-issue">
+                <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white/10 text-base px-6 py-6 h-auto flex items-center gap-2">
+                  <PenLine className="h-5 w-5" />
+                  Report an Issue
                 </Button>
               </Link>
             </div>
@@ -48,7 +44,7 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6 rounded-lg border border-gray-100 shadow-sm">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-water-soft flex items-center justify-center">
-                  <AlertCircle size={28} className="text-water-bright" />
+                  <PenLine size={28} className="text-water-bright" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Report an Issue</h3>
                 <p className="text-gray-600">Submit water problems in your area through our easy-to-use form.</p>
@@ -56,18 +52,20 @@ const Index = () => {
               
               <div className="text-center p-6 rounded-lg border border-gray-100 shadow-sm">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-light flex items-center justify-center">
-                  <Clock4 size={28} className="text-purple-primary" />
+                  <Map size={28} className="text-purple-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Track Progress</h3>
-                <p className="text-gray-600">Follow the status of reported issues and receive timely updates.</p>
+                <h3 className="text-xl font-semibold mb-2">View on Map</h3>
+                <p className="text-gray-600">See all reported issues in your community on our interactive map.</p>
               </div>
               
               <div className="text-center p-6 rounded-lg border border-gray-100 shadow-sm">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-status-resolved/20 flex items-center justify-center">
-                  <CheckCircle2 size={28} className="text-status-resolved" />
+                  <svg className="h-7 w-7 text-status-resolved" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Problem Solved</h3>
-                <p className="text-gray-600">Get notified when issues are resolved and rate the solution.</p>
+                <h3 className="text-xl font-semibold mb-2">Track Resolution</h3>
+                <p className="text-gray-600">Follow the progress of your reports and get notified when issues are resolved.</p>
               </div>
             </div>
           </div>

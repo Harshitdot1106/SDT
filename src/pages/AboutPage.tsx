@@ -112,8 +112,36 @@ const AboutPage = () => {
           </div>
         </section>
         
-        {/* How it works */}
+        {/* Team Members */}
         <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <h2 className="text-3xl font-bold mb-6">Our Team</h2>
+            <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
+              FixMyWater was created by a team of environmentalists, civic technologists, and water infrastructure experts
+              passionate about improving community water systems through collaboration and transparency.
+            </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {teamMembers.map((member, index) => (
+                <Card key={index} className="h-full">
+                  <CardContent className="pt-6 text-center h-full flex flex-col">
+                    <div className="w-24 h-24 bg-water-soft rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span className="text-2xl text-water-bright font-bold">
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold">{member.name}</h3>
+                    <p className="text-sm text-water-bright mb-2">{member.role}</p>
+                    <p className="text-xs text-gray-600 mt-auto">{member.bio}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* How it works */}
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4 max-w-4xl">
             <h2 className="text-3xl font-bold mb-12 text-center">How FixMyWater Works</h2>
             
@@ -169,128 +197,7 @@ const AboutPage = () => {
           </div>
         </section>
         
-        {/* Benefits */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-3xl font-bold mb-12 text-center">Benefits of Using FixMyWater</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-water-soft flex items-center justify-center">
-                    <CheckCircle2 className="text-water-bright h-5 w-5" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Faster Issue Resolution</h3>
-                  <p className="text-gray-600 text-sm">
-                    Direct reporting and clear communication channels lead to quicker response times for water issues.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-water-soft flex items-center justify-center">
-                    <CheckCircle2 className="text-water-bright h-5 w-5" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Community Awareness</h3>
-                  <p className="text-gray-600 text-sm">
-                    Stay informed about water issues in your neighborhood and surrounding areas.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-water-soft flex items-center justify-center">
-                    <CheckCircle2 className="text-water-bright h-5 w-5" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Transparent Tracking</h3>
-                  <p className="text-gray-600 text-sm">
-                    Follow the progress of your reports from submission to resolution with real-time updates.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-water-soft flex items-center justify-center">
-                    <CheckCircle2 className="text-water-bright h-5 w-5" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Data for Better Infrastructure</h3>
-                  <p className="text-gray-600 text-sm">
-                    Reports help authorities identify recurring problems and prioritize infrastructure improvements.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-water-soft flex items-center justify-center">
-                    <CheckCircle2 className="text-water-bright h-5 w-5" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Simplified Reporting</h3>
-                  <p className="text-gray-600 text-sm">
-                    Easy-to-use forms and interfaces make reporting water issues quick and straightforward.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-water-soft flex items-center justify-center">
-                    <CheckCircle2 className="text-water-bright h-5 w-5" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Historical Data Access</h3>
-                  <p className="text-gray-600 text-sm">
-                    Access past reports and track the history of water issues in your area over time.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Team Members */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h2 className="text-3xl font-bold mb-6">Our Team</h2>
-            <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
-              FixMyWater was created by a team of environmentalists, civic technologists, and water infrastructure experts
-              passionate about improving community water systems through collaboration and transparency.
-            </p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {teamMembers.map((member, index) => (
-                <Card key={index} className="h-full">
-                  <CardContent className="pt-6 text-center h-full flex flex-col">
-                    <div className="w-24 h-24 bg-water-soft rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <span className="text-2xl text-water-bright font-bold">
-                        {member.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
-                    <h3 className="font-semibold">{member.name}</h3>
-                    <p className="text-sm text-water-bright mb-2">{member.role}</p>
-                    <p className="text-xs text-gray-600 mt-auto">{member.bio}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-        {/* CTA */}
+        {/* CTA Section */}
         <section className="py-16 bg-water-bright text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6">Join the FixMyWater Community</h2>
