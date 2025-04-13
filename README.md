@@ -1,73 +1,29 @@
-# Welcome to your Lovable project
+# FixMyWater
 
-## Project info
+FixMyWater is a community-driven platform designed to empower citizens to report water-related issues—such as leaks, contamination, or supply disruptions—and enable municipal authorities to address them efficiently. The application promotes transparency and accountability in water management, aligning with Sustainable Development Goal 6: Clean Water and Sanitation.​
 
-**URL**: https://lovable.dev/projects/91eaeb06-79b4-4763-a91b-e102f2d0f08a
+🌐 Live Demo
+[Project Link](https://lovable.dev/projects/91eaeb06-79b4-4763-a91b-e102f2d0f08a)
 
-## How can I edit this code?
+🚀 Features
+User Authentication: Secure sign-up and login functionality using Supabase Auth.​
 
-There are several ways of editing your application.
+Issue Reporting: Intuitive form for users to report water issues with details like type, description, location, and optional image uploads.​
 
-**Use Lovable**
+Interactive Map: Visual representation of reported issues using Mapbox, allowing users to view and filter reports geographically.​
+GitHub
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/91eaeb06-79b4-4763-a91b-e102f2d0f08a) and start prompting.
+Admin Dashboard: Administrative interface for authorities to manage reports, update statuses, and assign tasks.​
 
-Changes made via Lovable will be committed automatically to this repo.
+Email Notifications: Automated email alerts to inform users about the status of their reports.​
 
-**Use your preferred IDE**
+Responsive Design: Mobile-friendly and accessible UI built with Shadcn UI and Tailwind CSS.​
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+🛠️ Tech Stack
+## Frontend: Vite, React, TypeScript, Shadcn UI, Tailwind CSS​
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Backend: Supabase (Database, Auth, Storage)​
 
-Follow these steps:
+## Maps: Google maps JS​
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/91eaeb06-79b4-4763-a91b-e102f2d0f08a) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Email: Supabase Functions
