@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,9 +17,17 @@ import { Droplet, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+
+// Mock user data
+const mockUsers = [
+  { email: "admin@example.com", password: "admin123", role: "admin", name: "Admin User" },
+  { email: "user@example.com", password: "user123", role: "user", name: "Regular User" }
+];
 
 const LoginPage = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -31,30 +39,78 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call with timeout
+    // Mock authentication logic
+    const foundUser = mockUsers.find(
+      (user) => user.email === loginEmail && user.password === loginPassword
+    );
+    
     setTimeout(() => {
-      toast({
-        title: "Login Successful",
-        description: "Welcome back to FixMyWater!",
-      });
+      if (foundUser) {
+        // Store user info in localStorage for persistence
+        localStorage.setItem("user", JSON.stringify({
+          email: foundUser.email,
+          name: foundUser.name,
+          role: foundUser.role,
+          isLoggedIn: true
+        }));
+        
+        toast({
+          title: "Login Successful",
+          description: `Welcome back, ${foundUser.name}!`,
+        });
+        
+        // Redirect based on role
+        if (foundUser.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
+      } else {
+        toast({
+          title: "Login Failed",
+          description: "Invalid email or password. Please try again.",
+          variant: "destructive"
+        });
+      }
       
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call with timeout
+    // Check if email already exists
+    const emailExists = mockUsers.some((user) => user.email === registerEmail);
+    
     setTimeout(() => {
-      toast({
-        title: "Registration Successful",
-        description: "Your account has been created successfully!",
-      });
+      if (emailExists) {
+        toast({
+          title: "Registration Failed",
+          description: "An account with this email already exists.",
+          variant: "destructive"
+        });
+      } else {
+        // In a real app, we would create a new user in the database
+        toast({
+          title: "Registration Successful",
+          description: "Your account has been created successfully!",
+        });
+        
+        // Auto-login the new user
+        localStorage.setItem("user", JSON.stringify({
+          email: registerEmail,
+          name: registerName,
+          role: "user",
+          isLoggedIn: true
+        }));
+        
+        navigate("/dashboard");
+      }
       
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   return (
@@ -113,6 +169,11 @@ const LoginPage = () => {
                         className="water-input"
                         required
                       />
+                    </div>
+                    <div className="text-sm text-gray-500 mb-2">
+                      <p>Demo credentials:</p>
+                      <p>Admin: admin@example.com / admin123</p>
+                      <p>User: user@example.com / user123</p>
                     </div>
                     <Button 
                       type="submit" 

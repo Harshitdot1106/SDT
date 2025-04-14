@@ -1,12 +1,29 @@
 
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Droplet, Home, Map, LayoutDashboard, PenLine, LogIn, UserPlus } from "lucide-react";
+import { Menu, X, Droplet, Home, Map, LayoutDashboard, PenLine, LogIn, UserPlus, LogOut, Settings } from "lucide-react";
+import { isLoggedIn, isAdmin, logoutUser, getCurrentUser } from "@/utils/authUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const userLoggedIn = isLoggedIn();
+  const userIsAdmin = isAdmin();
+  const currentUser = getCurrentUser();
+  
+  const handleLogout = () => {
+    logoutUser();
+    toast({
+      title: "Logged out successfully",
+      description: "You have been logged out of your account."
+    });
+    navigate("/");
+  };
   
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-40">
@@ -61,27 +78,57 @@ const Navbar = () => {
                 <span>Report Issue</span>
               </Button>
             </Link>
+            
+            {userIsAdmin && (
+              <Link to="/admin">
+                <Button 
+                  variant={location.pathname === "/admin" ? "secondary" : "ghost"} 
+                  className="flex items-center gap-2"
+                >
+                  <Settings size={18} />
+                  <span>Admin</span>
+                </Button>
+              </Link>
+            )}
           </div>
 
           <div className="hidden md:flex items-center space-x-2">
-            <Link to="/login">
-              <Button 
-                variant="ghost" 
-                className="flex items-center gap-2"
-              >
-                <LogIn size={18} />
-                <span>Sign in</span>
-              </Button>
-            </Link>
-            
-            <Link to="/register">
-              <Button 
-                className="bg-purple-500 text-white hover:bg-purple-600"
-              >
-                <UserPlus size={18} className="mr-2" />
-                Sign up
-              </Button>
-            </Link>
+            {userLoggedIn ? (
+              <>
+                <span className="text-sm text-gray-600 mr-2">
+                  Hi, {currentUser?.name || 'User'}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  className="flex items-center gap-2"
+                  onClick={handleLogout}
+                >
+                  <LogOut size={18} />
+                  <span>Logout</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button 
+                    variant="ghost" 
+                    className="flex items-center gap-2"
+                  >
+                    <LogIn size={18} />
+                    <span>Sign in</span>
+                  </Button>
+                </Link>
+                
+                <Link to="/register">
+                  <Button 
+                    className="bg-purple-500 text-white hover:bg-purple-600"
+                  >
+                    <UserPlus size={18} className="mr-2" />
+                    Sign up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
           
           {/* Mobile menu button */}
@@ -145,24 +192,57 @@ const Navbar = () => {
               <span>Report Issue</span>
             </Link>
             
-            <div className="pt-4 border-t flex flex-col gap-2">
+            {userIsAdmin && (
               <Link 
-                to="/login" 
-                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100"
+                to="/admin" 
+                className={`flex items-center gap-2 px-3 py-2 rounded-md ${
+                  location.pathname === "/admin" ? "bg-gray-100" : "hover:bg-gray-100"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                <LogIn size={18} />
-                <span>Sign in</span>
+                <Settings size={18} />
+                <span>Admin</span>
               </Link>
-              
-              <Link 
-                to="/register" 
-                className="flex items-center gap-2 px-3 py-2 rounded-md bg-purple-500 text-white"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <UserPlus size={18} />
-                <span>Sign up</span>
-              </Link>
+            )}
+            
+            <div className="pt-4 border-t">
+              {userLoggedIn ? (
+                <>
+                  <div className="px-3 py-2 text-sm text-gray-600">
+                    Hi, {currentUser?.name || 'User'}
+                  </div>
+                  <button 
+                    className="flex items-center gap-2 px-3 py-2 rounded-md w-full hover:bg-gray-100"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Link 
+                    to="/login" 
+                    className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LogIn size={18} />
+                    <span>Sign in</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/register" 
+                    className="flex items-center gap-2 px-3 py-2 rounded-md bg-purple-500 text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <UserPlus size={18} />
+                    <span>Sign up</span>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
