@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StatusBadge from "@/components/StatusBadge";
@@ -29,132 +30,38 @@ import {
   SearchIcon,
   FilterIcon,
   ArrowUpDown,
+  Eye,
 } from "lucide-react";
 import { Report, Status } from "@/types";
 import { formatDistanceToNow } from "date-fns";
-
-// Mock data - to be replaced with Supabase fetch
-const mockReports: Report[] = [
-  {
-    id: "1",
-    title: "Burst pipe on Main Street",
-    description: "Water is flooding the road and causing traffic issues",
-    issue_type: "leak",
-    status: "urgent",
-    location: {
-      address: "123 Main St, Anytown",
-      lat: 40.7128,
-      lng: -74.006,
-    },
-    created_at: new Date(Date.now() - 3600000).toISOString(),
-    updated_at: new Date(Date.now() - 1800000).toISOString(),
-    user_id: "user1",
-    user: {
-      full_name: "John Doe",
-      email: "john@example.com",
-    },
-  },
-  {
-    id: "2",
-    title: "Brown water coming from tap",
-    description: "The water from my kitchen tap has been brown for two days",
-    issue_type: "contamination",
-    status: "in_progress",
-    location: {
-      address: "456 Oak Ave, Anytown",
-      lat: 40.7228,
-      lng: -74.016,
-    },
-    created_at: new Date(Date.now() - 172800000).toISOString(),
-    updated_at: new Date(Date.now() - 86400000).toISOString(),
-    user_id: "user2",
-    user: {
-      full_name: "Jane Smith",
-      email: "jane@example.com",
-    },
-  },
-  {
-    id: "3",
-    title: "No water pressure",
-    description: "Extremely low water pressure throughout the house since this morning",
-    issue_type: "pressure",
-    status: "pending",
-    location: {
-      address: "789 Pine St, Anytown",
-      lat: 40.7328,
-      lng: -74.026,
-    },
-    created_at: new Date(Date.now() - 259200000).toISOString(),
-    updated_at: new Date(Date.now() - 259200000).toISOString(),
-    user_id: "user3",
-    user: {
-      full_name: "Bob Johnson",
-      email: "bob@example.com",
-    },
-  },
-  {
-    id: "4",
-    title: "Water meter reading incorrect",
-    description: "My water bill shows unusually high usage that doesn't match our consumption",
-    issue_type: "billing",
-    status: "resolved",
-    location: {
-      address: "101 Elm St, Anytown",
-      lat: 40.7428,
-      lng: -74.036,
-    },
-    created_at: new Date(Date.now() - 604800000).toISOString(),
-    updated_at: new Date(Date.now() - 172800000).toISOString(),
-    user_id: "user4",
-    user: {
-      full_name: "Alice Brown",
-      email: "alice@example.com",
-    },
-  },
-  {
-    id: "5",
-    title: "Flooding in basement",
-    description: "After heavy rain, water is seeping into my basement",
-    issue_type: "flooding",
-    status: "urgent",
-    location: {
-      address: "202 Maple Dr, Anytown",
-      lat: 40.7528,
-      lng: -74.046,
-    },
-    created_at: new Date(Date.now() - 43200000).toISOString(),
-    updated_at: new Date(Date.now() - 21600000).toISOString(),
-    user_id: "user5",
-    user: {
-      full_name: "Sam Wilson",
-      email: "sam@example.com",
-    },
-  },
-];
+import { useReports } from "@/context/ReportsContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const AdminDashboard = () => {
-  const [reports, setReports] = useState(mockReports);
+  const { reports, updateReportStatus } = useReports();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   const filteredReports = reports.filter((report) => {
     const matchesSearch = 
       report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.location.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.user?.full_name.toLowerCase().includes(searchQuery.toLowerCase());
+      (report.user?.full_name && report.user.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
     
     const matchesStatus = statusFilter === "all" || report.status === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
   
-  const updateReportStatus = (reportId: string, newStatus: Status) => {
-    setReports(reports.map(report => 
-      report.id === reportId 
-        ? { ...report, status: newStatus, updated_at: new Date().toISOString() } 
-        : report
-    ));
+  const handleStatusChange = (reportId: string, newStatus: Status) => {
+    updateReportStatus(reportId, newStatus);
+    toast({
+      title: "Status updated",
+      description: "The report status has been successfully updated",
+    });
   };
   
   const getMetrics = () => {
@@ -283,7 +190,7 @@ const AdminDashboard = () => {
                     filteredReports.map((report) => (
                       <TableRow key={report.id}>
                         <TableCell className="font-medium">{report.title}</TableCell>
-                        <TableCell>{report.user?.full_name}</TableCell>
+                        <TableCell>{report.user?.full_name || "Anonymous"}</TableCell>
                         <TableCell className="truncate max-w-xs">{report.location.address}</TableCell>
                         <TableCell>
                           {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
@@ -292,20 +199,30 @@ const AdminDashboard = () => {
                           <StatusBadge status={report.status} />
                         </TableCell>
                         <TableCell>
-                          <Select
-                            value={report.status}
-                            onValueChange={(value) => updateReportStatus(report.id, value as Status)}
-                          >
-                            <SelectTrigger className="w-[130px]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="urgent">Urgent</SelectItem>
-                              <SelectItem value="in_progress">In Progress</SelectItem>
-                              <SelectItem value="resolved">Resolved</SelectItem>
-                              <SelectItem value="pending">Pending</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => navigate(`/reports/${report.id}`)}
+                              title="View report details"
+                            >
+                              <Eye size={16} />
+                            </Button>
+                            <Select
+                              value={report.status}
+                              onValueChange={(value) => handleStatusChange(report.id, value as Status)}
+                            >
+                              <SelectTrigger className="w-[130px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="urgent">Urgent</SelectItem>
+                                <SelectItem value="in_progress">In Progress</SelectItem>
+                                <SelectItem value="resolved">Resolved</SelectItem>
+                                <SelectItem value="pending">Pending</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))

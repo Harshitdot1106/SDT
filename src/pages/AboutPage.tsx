@@ -43,7 +43,7 @@ const AboutPage = () => {
       
       <main className="flex-grow">
         {/* Hero */}
-        <section className="bg-gradient-to-b from-water-soft to-white py-16">
+        <section className="bg-gradient-to-b from-blue-50 to-white py-16">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <h1 className="text-4xl font-bold mb-6">About FixMyWater</h1>
             <p className="text-lg text-gray-700 mb-8">
@@ -52,7 +52,7 @@ const AboutPage = () => {
             </p>
             <div className="flex justify-center gap-4">
               <Link to="/report-issue">
-                <Button className="water-button">Report an Issue</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700">Report an Issue</Button>
               </Link>
               <Link to="/map">
                 <Button variant="outline">View Issue Map</Button>
@@ -75,8 +75,8 @@ const AboutPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card>
                 <CardContent className="pt-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-water-soft flex items-center justify-center mx-auto mb-4">
-                    <Users className="text-water-bright" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                    <Users className="text-blue-600" />
                   </div>
                   <h3 className="font-medium text-lg mb-2">Community Empowerment</h3>
                   <p className="text-gray-600 text-sm">
@@ -87,8 +87,8 @@ const AboutPage = () => {
               
               <Card>
                 <CardContent className="pt-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-water-soft flex items-center justify-center mx-auto mb-4">
-                    <BarChart2 className="text-water-bright" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                    <BarChart2 className="text-blue-600" />
                   </div>
                   <h3 className="font-medium text-lg mb-2">Data-Driven Solutions</h3>
                   <p className="text-gray-600 text-sm">
@@ -99,8 +99,8 @@ const AboutPage = () => {
               
               <Card>
                 <CardContent className="pt-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-water-soft flex items-center justify-center mx-auto mb-4">
-                    <MessageSquare className="text-water-bright" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                    <MessageSquare className="text-blue-600" />
                   </div>
                   <h3 className="font-medium text-lg mb-2">Transparent Communication</h3>
                   <p className="text-gray-600 text-sm">
@@ -125,13 +125,13 @@ const AboutPage = () => {
               {teamMembers.map((member, index) => (
                 <Card key={index} className="h-full">
                   <CardContent className="pt-6 text-center h-full flex flex-col">
-                    <div className="w-24 h-24 bg-water-soft rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <span className="text-2xl text-water-bright font-bold">
+                    <div className="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span className="text-2xl text-blue-600 font-bold">
                         {member.name.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
                     <h3 className="font-semibold">{member.name}</h3>
-                    <p className="text-sm text-water-bright mb-2">{member.role}</p>
+                    <p className="text-sm text-blue-600 mb-2">{member.role}</p>
                     <p className="text-xs text-gray-600 mt-auto">{member.bio}</p>
                   </CardContent>
                 </Card>
@@ -153,7 +153,7 @@ const AboutPage = () => {
                     Anyone can easily submit reports about water-related problems, from burst pipes to contamination concerns.
                     Simply fill out our user-friendly form with issue details, location, and optional photos.
                   </p>
-                  <Link to="/report-issue" className="text-water-bright hover:underline">
+                  <Link to="/report-issue" className="text-blue-600 hover:underline">
                     Submit a report →
                   </Link>
                 </div>
@@ -172,7 +172,7 @@ const AboutPage = () => {
                     All reports are displayed on our interactive map, allowing residents and authorities to see the
                     distribution and concentration of water issues in the community.
                   </p>
-                  <Link to="/map" className="text-water-bright hover:underline">
+                  <Link to="/map" className="text-blue-600 hover:underline">
                     Explore the map →
                   </Link>
                 </div>
@@ -185,7 +185,7 @@ const AboutPage = () => {
                     Follow the status of reported issues from submission to resolution. Get notified when authorities
                     respond to or resolve your reports.
                   </p>
-                  <Link to="/reports" className="text-water-bright hover:underline">
+                  <Link to="/reports" className="text-blue-600 hover:underline">
                     View report statuses →
                   </Link>
                 </div>
@@ -198,7 +198,7 @@ const AboutPage = () => {
         </section>
         
         {/* CTA Section */}
-        <section className="py-16 bg-water-bright text-white">
+        <section className="py-16 bg-blue-600 text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6">Join the FixMyWater Community</h2>
             <p className="max-w-2xl mx-auto mb-8 text-white/90">
@@ -206,7 +206,7 @@ const AboutPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link to="/register">
-                <Button className="bg-white text-water-bright hover:bg-gray-100">
+                <Button className="bg-white text-blue-600 hover:bg-gray-100">
                   Create an Account
                 </Button>
               </Link>

@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import { Report, IssueType, Status } from "@/types";
 
@@ -155,6 +156,7 @@ const initialReports: Report[] = [
 interface ReportsContextType {
   reports: Report[];
   addReport: (report: Omit<Report, "id" | "created_at" | "updated_at" | "comments">) => void;
+  updateReportStatus: (reportId: string, newStatus: Status) => void;
 }
 
 const ReportsContext = createContext<ReportsContextType | undefined>(undefined);
@@ -175,8 +177,18 @@ export const ReportsProvider: React.FC<{ children: ReactNode }> = ({ children })
     setReports((prevReports) => [report, ...prevReports]);
   };
 
+  const updateReportStatus = (reportId: string, newStatus: Status) => {
+    setReports((prevReports) =>
+      prevReports.map((report) =>
+        report.id === reportId
+          ? { ...report, status: newStatus, updated_at: new Date().toISOString() }
+          : report
+      )
+    );
+  };
+
   return (
-    <ReportsContext.Provider value={{ reports, addReport }}>
+    <ReportsContext.Provider value={{ reports, addReport, updateReportStatus }}>
       {children}
     </ReportsContext.Provider>
   );
