@@ -32,9 +32,9 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="bg-blue-500 rounded-full p-2">
-              <Droplet size={24} className="text-white" />
+             
             </div>
-            <span className="font-bold text-xl text-blue-500">FixMyWater</span>
+            <span className="font-bold text-xl text-blue-500"></span>
           </Link>
           
           {/* Desktop navigation */}
